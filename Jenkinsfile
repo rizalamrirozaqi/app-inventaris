@@ -23,8 +23,9 @@ pipeline {
         stage('Export Metrics to Prometheus') {
             steps {
                 script {
-                    def duration = currentBuild.durationString.replace(' ms', '').toInteger()
-                    sh "echo 'jenkins_build_duration_seconds ${duration / 1000}' | curl --data-binary @- http://prometheus:9090/metrics || true"
+                    def durationMs = currentBuild.duration ?: 0
+                    def durationSeconds = durationMs / 1000
+                    sh "echo 'jenkins_build_duration_seconds ${durationSeconds}' | curl --data-binary @- http://prometheus:9090/metrics || true"
                 }
             }
         }
