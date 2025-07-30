@@ -25,13 +25,24 @@ services:
   loki:
     image: grafana/loki:2.9.2
     ports:
-      - 3200:3100
+      - 3100:3100
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
       - ./loki/index:/loki/index
       - ./loki/chunks:/loki/chunks
       - ./loki/boltdb-cache:/loki/boltdb-cache
+      - ./loki/wal:/wal
+      - ./loki/compactor:/loki/compactor
+    networks:
+      - monitoring
+
+  promtail:
+    image: grafana/promtail:2.9.2
+    volumes:
+      - ./promtail-config.yaml:/etc/promtail/config.yml
+      - ./logs:/mnt/logs
+    command: -config.file=/etc/promtail/config.yml
     networks:
       - monitoring
 

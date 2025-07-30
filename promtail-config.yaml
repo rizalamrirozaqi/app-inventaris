@@ -1,0 +1,23 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+positions:
+  filename: /tmp/positions.yaml
+
+scrape_configs:
+  - job_name: windowslogs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: winlog
+          __path__: /mnt/logs/*.log
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<level>\w+): (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - (?P<message>.*)$'
+      - labels:
+          level:
