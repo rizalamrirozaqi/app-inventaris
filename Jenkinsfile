@@ -19,6 +19,14 @@ pipeline {
                 archiveArtifacts artifacts: 'output.log'
             }
         }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'sonar-scanner'
+                }
+            }
+        }
 
         stage('Export Metrics to Prometheus') {
             steps {
